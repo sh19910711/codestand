@@ -1,4 +1,9 @@
+#
+#  localhost:8000    emu-server
+#
 version: '2'
 services:
   emu:
     build: emu-server
+    ports:
+      - '8000:5000'
