@@ -17,7 +17,6 @@ services:
   gateway:
     build: ./gateway
     networks:
-      - frontend
       - backend
     links:
       - buildserver
