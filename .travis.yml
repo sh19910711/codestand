@@ -1,0 +1,10 @@
+language: bash
+sudo: required
+services:
+  - docker
+
+install:
+  - docker-compose build
+
+script:
+  - docker-compose up -d
