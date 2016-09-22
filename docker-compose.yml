@@ -28,7 +28,6 @@ services:
   mgmt:
     build: ./mgmt
     links:
-      - buildserver
       - mgmt-db
     environment:
       - RAILS_ENV=production
