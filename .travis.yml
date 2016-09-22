@@ -7,4 +7,4 @@ install:
   - ./deploy.sh
 
 script:
-  - "for t in test/*_test.bash; do bash $t done"
+  - "for t in test/*_test.bash; do bash $t; done"
