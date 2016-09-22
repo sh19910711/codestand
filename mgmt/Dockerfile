@@ -26,10 +26,11 @@ WORKDIR /app
 RUN gem install bundler
 RUN bundle install -j4 --without development test mysql
 # TODO: update config/database.yml
-RUN echo 'production:' >> config/database.yml && \
+RUN echo 'production:' > config/database.yml && \
     echo '  url: <%= ENV["DATABASE_URL"] %>' >> config/database.yml
 RUN echo 'production:' > config/secrets.yml && \
-    echo "  secret_key_base: \"$(cat /dev/urandom | strings | tr -d '\t\n ' | head -c 128)\"" >> config/secrets.yml
+    echo "  secret_key_base: \"$(cat /dev/urandom | strings | tr -dc 'a-zA-Z0-9' | head -c 128)\"" >> config/secrets.yml
+RUN cat config/secrets.yml
 
 USER root
 RUN apk del builddeps
