@@ -4,7 +4,7 @@ services:
   - docker
 
 install:
-  - docker-compose build
+  - ./deploy.sh
 
 script:
-  - docker-compose up -d
+  - "for t in test/*_test.bash; do bash $t done"
