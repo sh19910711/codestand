@@ -5,6 +5,9 @@ version: '2'
 services:
   gateway:
     build: ./gateway
+    networks:
+      - frontend
+      - backend
     ports:
       - '80:80'
     links:
@@ -15,29 +18,55 @@ services:
   # /*
   mockup:
     build: ./mockup
+    networks:
+      - frontend
     links:
       - mockup-db
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@mockup-db
   mockup-db:
     image: postgres
+    networks:
+      - frontend
     volumes:
       - /data/mockup-db:/var/lib/postgresql/data
 
   # /mgmt/*
   mgmt:
     build: ./mgmt
+    networks:
+      - backend
     links:
       - mgmt-db
     environment:
       - RAILS_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@mgmt-db
-      - BUILDSERVER_URL=http://buildserver:8080
+      - BUILDSERVER_URL=http://gateway/build
   mgmt-db:
     image: postgres
+    networks:
+      - backend
     volumes:
       - /data/mgmt-db:/var/lib/postgresql/data
 
   # /build/*
   buildserver:
     build: ./build
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.2.0/24
+          gateway: 172.16.2.1
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.12.3.0/24
+          gateway: 172.12.3.1
