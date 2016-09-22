@@ -47,7 +47,6 @@ services:
     environment:
       - RAILS_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@mgmt-db
-      - BUILDSERVER_URL=http://gateway/build
   mgmt-db:
     image: postgres
     networks:
