@@ -1,22 +1,9 @@
-FROM golang:1.7-alpine
+FROM alpine:3.4
 
-RUN apk update && apk upgrade && apk add --virtual builddeps \
-  make \
-  git
-
-# build
-RUN git clone --depth 1 --recursive https://github.com/codestand/build /go/src/build
-WORKDIR /go/src/build
-RUN make init
-RUN make build
-
-# cleanup
-RUN apk del builddeps
-
-RUN apk update && apk upgrade && apk add --virtual rundeps \
-  supervisor
-RUN adduser -S web && addgroup -S web && addgroup web web
-RUN mkdir /var/run/supervisor && mkdir /var/log/supervisor
+RUN apk update && apk upgrade && apk add --no-cache curl tar supervisor && \
+  mkdir -p /app && curl -L https://github.com/codestand/build/releases/download/0.0.2/app.tar.gz | tar -o -C /app -zxvf - && \
+  mkdir /var/run/supervisor && mkdir /var/log/supervisor && \
+  adduser -S web && addgroup -S web && addgroup web web
 
 COPY root /
 EXPOSE 8080
