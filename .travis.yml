@@ -9,9 +9,10 @@ env:
 
 before_install:
   # stupid way
-  - sudo bash -c 'echo DOCKER_OPTS="-H tcp://172.16.100.11" > /etc/default/docker'
-  - netstat -an | grep LISTEN
+  - DOCKER_HOST=tcp://127.0.0.1 docker-compose up build
+  - sudo bash -c 'echo DOCKER_OPTS="-H tcp://172.16.100.11:2375" > /etc/default/docker'
   - sudo service docker restart
+  - netstat -an | grep LISTEN
 
 install:
   - docker-compose build
