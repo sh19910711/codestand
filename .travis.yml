@@ -1,0 +1,8 @@
+language: bash
+sudo: required
+services:
+  - docker
+install:
+  - docker-compose up -d
+script:
+  - docker-compose exec mgmt rails db:migrate
