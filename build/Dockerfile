@@ -1,11 +1,11 @@
-FROM alpine:3.4
+FROM ubuntu:16.04
 
 ENV BUILD_SERVER_VERSION=0.0.2
 
-RUN apk update && apk upgrade && apk add --no-cache curl tar supervisor && \
-  mkdir /var/run/supervisor && mkdir /var/log/supervisor
+RUN apt-get update && apt-get install -y curl tar supervisor && \
+  mkdir /var/run/supervisor
 RUN mkdir -p /app && curl -L https://github.com/codestand/build/releases/download/$BUILD_SERVER_VERSION/app.tar.gz | tar -C /app -zxvf -
-RUN addgroup -S web && adduser -G web -S web && chown web. /app
+RUN useradd web && chown web. /app
 
 COPY root /
 EXPOSE 8080

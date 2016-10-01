@@ -18,5 +18,7 @@ install:
 script:
   - docker-compose up -d
   - sleep 5
+
+  # test docker access
   - docker-compose exec build sh -c "curl https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz | tar -C /tmp -zxf -"
   - docker-compose exec build /tmp/docker/docker ps
