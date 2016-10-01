@@ -1,53 +1,38 @@
 version: '2'
 
 services:
-  gateway:
+  web-gateway:
     build: ./gateway
-    networks:
-      - front
-    links:
-      - mgmt
     ports:
       - '80:80'
+    networks:
+      - front
 
   mgmt:
     build: ./mgmt
-    networks:
-      - front
-      - back
     environment:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=not-a-secret
+    networks:
+      - front
+      - back
 
   build:
     build: ./build
     environment:
-      - DOCKER_HOST=tcp://172.13.11.1
+      - DOCKER_HOST=tcp://172.16.100.11
     networks:
-      - back
-      - allow_docker
+      back:
+        ipv4_address: 172.16.100.2
 
 networks:
   front:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.11.11.0/24
-        gateway: 172.11.11.1
 
   back:
     driver: bridge
     ipam:
       driver: default
       config:
-      - subnet: 172.12.11.0/24
-        gateway: 172.12.11.1
-
-  allow_docker:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.13.11.0/24
-        gateway: 172.13.11.1
+        - subnet: 172.16.100.0/24
+          gateway: 172.16.100.11
