@@ -2,9 +2,8 @@ language: bash
 sudo: required
 services:
   - docker
-
 install:
-  - ./deploy.sh
-
+  - ./script/deploy_via_docker.sh
 script:
-  - "for t in test/*_test.bash; do bash $t; done"
+  - docker-compose exec mgmt apk add curl
+  - docker-compose exec mgmt curl http://build:8080/builds
