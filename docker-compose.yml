@@ -1,9 +1,38 @@
-#
-#  localhost:8000    emu-server
-#
 version: '2'
+
 services:
-  emu:
-    build: emu-server
+  gateway:
+    build: ./gateway
     ports:
-      - '8000:5000'
+      - '80:80'
+    networks:
+      - front
+
+  mgmt:
+    build: ./mgmt
+    environment:
+      - RAILS_ENV=production
+      - SECRET_KEY_BASE=not-a-secret
+    networks:
+      - front
+      - back
+
+  build:
+    build: ./build
+    environment:
+      - DOCKER_HOST=tcp://172.16.100.11
+    networks:
+      back:
+        ipv4_address: 172.16.100.2
+
+networks:
+  front:
+    driver: bridge
+
+  back:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.100.0/24
+          gateway: 172.16.100.11
