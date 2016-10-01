@@ -1,0 +1,10 @@
+# Add docker apt repo if not exists
+- stat: path=/etc/apt/sources.list.d/docker.list
+  register: apt_docker_repo
+- include: ./apt_repo.yml
+  when: not apt_docker_repo.stat.exists
+
+# Install or update docker-engine
+- apt: name=docker-engine update_cache=yes state=latest
+- copy : src=./debian/root/ dest=/
+- service: name=docker state=restarted

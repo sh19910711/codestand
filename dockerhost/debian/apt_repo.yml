@@ -1,0 +1,13 @@
+# Prepare https
+- apt: name={{ item }} state=latest
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+# Prepare docker apt repository
+- name: receive key
+  shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+- name: add apt source
+  shell: echo deb https://apt.dockerproject.org/repo ubuntu-trusty main > /etc/apt/sources.list.d/docker.list
+- name: apt-cache policy docker-engine
+  shell: apt-cache policy docker-engine
