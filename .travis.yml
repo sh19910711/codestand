@@ -3,22 +3,8 @@ sudo: required
 services:
   - docker
 
-env:
-  global:
-    - DOCKER_HOST=tcp://172.16.100.11:2375
-
-before_install:
-  - DOCKER_HOST=tcp://127.0.0.1:2375 docker-compose up -d build
-  - sudo bash -c 'echo "DOCKER_OPTS=\"-H tcp://172.16.100.11:2375\"" > /etc/default/docker'
-  - sudo service docker restart
-
 install:
   - docker-compose build
 
 script:
   - docker-compose up -d
-  - sleep 5
-
-  # test docker access
-  - docker-compose exec build sh -c "curl https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz | tar -C /tmp -zxf -"
-  - docker-compose exec build /tmp/docker/docker ps
