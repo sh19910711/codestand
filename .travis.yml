@@ -9,7 +9,7 @@ env:
 
 before_install:
   # stupid way
-  - DOCKER_HOST=tcp://127.0.0.1:2375 docker-compose up build -d
+  - DOCKER_HOST=tcp://127.0.0.1:2375 docker-compose up -d build
   - sudo bash -c 'echo DOCKER_OPTS="-H tcp://172.16.100.11:2375" > /etc/default/docker'
   - sudo service docker restart
   - netstat -an | grep LISTEN
