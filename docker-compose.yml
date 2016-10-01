@@ -1,42 +1,15 @@
-#
-#  localhost:8000    emu-server
-#
 version: '2'
+
 services:
-  public-gateway:
-    build: ./public-gateway
+  gateway:
+    build: ./gateway
+    links:
+      - mgmt
     networks:
       - frontend
     ports:
       - '80:80'
-    links:
-      - mockup
-      - mgmt
 
-  gateway:
-    build: ./gateway
-    networks:
-      - backend
-    links:
-      - buildserver
-
-  # /*
-  mockup:
-    build: ./mockup
-    networks:
-      - frontend
-    links:
-      - mockup-db
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@mockup-db
-  mockup-db:
-    image: postgres
-    networks:
-      - frontend
-    volumes:
-      - /data/mockup-db:/var/lib/postgresql/data
-
-  # /mgmt/*
   mgmt:
     build: ./mgmt
     networks:
@@ -46,16 +19,17 @@ services:
       - mgmt-db
     environment:
       - RAILS_ENV=production
+      - SECRET_KEY_BASE=TODO
       - DATABASE_URL=postgresql://postgres:postgres@mgmt-db
+
   mgmt-db:
     image: postgres
     networks:
       - backend
     volumes:
-      - /data/mgmt-db:/var/lib/postgresql/data
+      - /var/lib/postgresql/data-mgmt:/var/lib/postgresql/data
 
-  # /build/*
-  buildserver:
+  build:
     build: ./build
     networks:
       - backend
