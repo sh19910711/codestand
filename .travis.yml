@@ -5,11 +5,12 @@ services:
 
 env:
   global:
-    - DOCKER_HOST=tcp://172.16.100.11
+    - DOCKER_HOST=tcp://172.16.100.11:2375
 
 before_install:
   # stupid way
   - sudo bash -c 'echo DOCKER_OPTS="-H tcp://172.16.100.11" > /etc/default/docker'
+  - netstat -an | grep LISTEN
   - sudo service docker restart
 
 install:
