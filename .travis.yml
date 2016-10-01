@@ -4,7 +4,7 @@ services:
   - docker
 
 install:
-  - docker-compose run mgmt bundle install --jobs 4 --without development --without mysql
+  - docker-compose run mgmt bundle install --jobs 4 --without test --without development --without mysql
   - docker-compose run mgmt bundle exec rails db:migrate
 
 script:
