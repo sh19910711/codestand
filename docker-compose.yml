@@ -3,39 +3,51 @@ version: '2'
 services:
   gateway:
     build: ./gateway
+    networks:
+      - front
     links:
       - mgmt
-    networks:
-      - frontend
     ports:
       - '80:80'
 
   mgmt:
     build: ./mgmt
     networks:
-      - frontend
-      - backend
+      - front
+      - back
     environment:
       - RAILS_ENV=production
-      - SECRET_KEY_BASE=TODO
+      - SECRET_KEY_BASE=not-a-secret
 
   build:
     build: ./build
+    environment:
+      - DOCKER_HOST=tcp://172.13.11.1
     networks:
-      - backend
+      - back
+      - allow_docker
 
 networks:
-  frontend:
+  front:
     driver: bridge
     ipam:
       driver: default
       config:
-        - subnet: 172.16.2.0/24
-          gateway: 172.16.2.1
-  backend:
+      - subnet: 172.11.11.0/24
+        gateway: 172.11.11.1
+
+  back:
     driver: bridge
     ipam:
       driver: default
       config:
-        - subnet: 172.12.3.0/24
-          gateway: 172.12.3.1
+      - subnet: 172.12.11.0/24
+        gateway: 172.12.11.1
+
+  allow_docker:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.13.11.0/24
+        gateway: 172.13.11.1
