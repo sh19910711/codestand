@@ -1,9 +1,41 @@
-#
-#  localhost:8000    emu-server
-#
 version: '2'
+
 services:
-  emu:
-    build: emu-server
+  gateway:
+    build: ./gateway
+    links:
+      - mgmt
+    networks:
+      - frontend
     ports:
-      - '8000:5000'
+      - '80:80'
+
+  mgmt:
+    build: ./mgmt
+    networks:
+      - frontend
+      - backend
+    environment:
+      - RAILS_ENV=production
+      - SECRET_KEY_BASE=TODO
+
+  build:
+    build: ./build
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.2.0/24
+          gateway: 172.16.2.1
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.12.3.0/24
+          gateway: 172.12.3.1
