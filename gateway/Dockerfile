@@ -1,68 +1,26 @@
 FROM alpine:3.4
 
-RUN apk update && apk upgrade && apk add --virtual builddeps \
-  gcc \
-  g++ \
-  make \
-  curl \
-  ruby-dev \
-  ruby-rake \
-  bison \
-  perl \
-  git 
-RUN apk add --virtual rundeps \
-  pcre-dev \
-  zlib-dev
+RUN apk update && apk upgrade && \
+  apk add --virtual builddeps gcc g++ make curl ruby-dev ruby-rake bison perl git && \
+  apk add pcre-dev zlib-dev
 
-# nginx with lua module
 ENV NGINX_VERSION="1.10.1"
-ENV NGX_DEVEL_KIT_VERSION="0.3.0"
-ENV NGX_MRUBY_VERSION="1.18.4"
 
-RUN mkdir -p /usr/src
+# build nginx
 WORKDIR /usr/src
+RUN curl -SL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxvf -
+WORKDIR /usr/src/
+RUN cd nginx-$NGINX_VERSION && \
+  ./configure --prefix=/usr/local && \
+  make && \
+  make install && \
+  apk del --purge builddeps && \
+  rm -rf /usr/src && \
+  addgroup -S nginx && adduser -G nginx -S nginx && \
+  mkdir -p /var/log/nginx && chown nginx. /var/log/nginx
 
-# ngx_devel_kit
-RUN curl -SL https://github.com/simpl/ngx_devel_kit/archive/v$NGX_DEVEL_KIT_VERSION.tar.gz > ngx_devel_kit-v$NGX_DEVEL_KIT_VERSION.tar.gz
-RUN tar zxvf ngx_devel_kit-v$NGX_DEVEL_KIT_VERSION.tar.gz
-
-# ngx_mruby
-RUN curl -SL https://github.com/matsumoto-r/ngx_mruby/archive/v$NGX_MRUBY_VERSION.tar.gz > ngx_mruby-v$NGX_MRUBY_VERSION.tar.gz
-RUN tar zxvf ngx_mruby-v$NGX_MRUBY_VERSION.tar.gz
-
-# nginx
-RUN curl -SL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz > nginx-$NGINX_VERSION.tar.gz
-RUN tar zxvf nginx-$NGINX_VERSION.tar.gz
-
-# prepare for ngx_mruby
-WORKDIR /usr/src/ngx_mruby-$NGX_MRUBY_VERSION
-COPY build_config.rb ./
-RUN ./configure --with-ngx-src-root=/usr/src/nginx-$NGINX_VERSION
-RUN make build_mruby
-RUN make generate_gems_config
-
-# build nginx with mruby
-WORKDIR /usr/src/nginx-$NGINX_VERSION
-RUN ./configure \
-  --prefix=/usr/local \
-  --add-module=/usr/src/ngx_mruby-$NGX_MRUBY_VERSION \
-  --add-module=/usr/src/ngx_devel_kit-$NGX_DEVEL_KIT_VERSION
-RUN make
-RUN make install
-
-# clean up
-RUN apk del builddeps
-RUN rm -rf /usr/src
-
-# setup for nginx
-RUN addgroup -S nginx
-RUN adduser -G nginx -S nginx
-RUN mkdir -p /var/log/nginx && chown nginx. /var/log/nginx
-
+# copy configurations
 COPY root /
-
-# test nginx.conf
-# RUN /usr/local/sbin/nginx -t -c /etc/nginx/nginx.conf
 
 EXPOSE 80
 CMD ["/usr/local/sbin/nginx", "-g", "daemon off;", "-c", "/etc/nginx/nginx.conf"]
