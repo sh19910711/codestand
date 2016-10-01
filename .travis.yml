@@ -11,4 +11,5 @@ install:
 
 script:
   - docker-compose up -d
+  - sleep 5
   - curl http://localhost/api/apps
