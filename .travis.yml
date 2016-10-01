@@ -2,7 +2,11 @@ language: bash
 sudo: required
 services:
   - docker
+
 install:
-  - docker-compose up -d
+  - docker-compose run mgmt bundle install --jobs 4 --without development --without mysql
+  - docker-compose run mgmt bundle exec rails db:migrate
+
 script:
-  - docker-compose exec mgmt rails db:migrate
+  - docker-compose up -d
+  - curl http://localhost/api/apps

@@ -8,7 +8,7 @@ ENV NGINX_VERSION="1.10.1"
 
 # build nginx
 WORKDIR /usr/src
-RUN curl -SL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxvf -
+RUN curl -SL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxf -
 WORKDIR /usr/src/
 RUN cd nginx-$NGINX_VERSION && \
   ./configure --prefix=/usr/local && \

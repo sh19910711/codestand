@@ -21,13 +21,15 @@ services:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=TODO
       - DATABASE_URL=postgresql://postgres:postgres@mgmt-db
+    volumes:
+      - /data/mgmt/bundle:/usr/local/bundle
 
   mgmt-db:
     image: postgres
     networks:
       - backend
     volumes:
-      - /var/lib/postgresql/data-mgmt:/var/lib/postgresql/data
+      - /data/mgmt/postgresql:/var/lib/postgresql/data
 
   build:
     build: ./build
