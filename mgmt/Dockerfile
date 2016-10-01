@@ -1,5 +1,6 @@
 FROM ruby:2.3.1
 
+RUN sed -i -e 's#http://archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y git build-essential libxml2-dev supervisor nodejs tzdata sqlite3
 RUN mkdir -p /var/run/supervisor
 
