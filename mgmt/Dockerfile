@@ -1,19 +1,14 @@
-FROM ruby:2.3.1-alpine
+FROM ruby:2.3.1
 
-# middleware
-RUN apk update && apk upgrade && \
-  apk add --no-cache git build-base libxml2-dev postgresql-dev supervisor nodejs tzdata sqlite-dev && \
-  mkdir /var/run/supervisor && mkdir /var/log/supervisor
+RUN apt-get update && apt-get install -y git build-essential libxml2-dev supervisor nodejs tzdata sqlite3
+RUN mkdir -p /var/run/supervisor
 
-# webapp
-RUN addgroup -S web && adduser -G web -S web && \
-  git clone --depth 1 --recursive https://github.com/codestand/mgmt /app && \
-  chown -R web. /app && \
-  cd /app && \
-  echo 'production:' > config/database.yml && \
-  echo '  url: <%= ENV["DATABASE_URL"] %>' >> config/database.yml
-
+RUN useradd -ms /bin/false web
+RUN git clone --depth 1 --recursive https://github.com/codestand/mgmt /app
 WORKDIR /app
+RUN bundle install -j2 --without test --without development --without mysql
+RUN bundle exec rails db:migrate
+
 USER root
 COPY root /
 EXPOSE 8080
