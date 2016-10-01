@@ -3,11 +3,16 @@ sudo: required
 services:
   - docker
 
+env:
+  global:
+    - DOCKER_HOST=tcp://172.16.100.11
+
+before_install:
+  - 'echo DOCKER_OPTS="-H 172.16.100.11" > /etc/default/docker'
+  - sudo service docker restart
+
 install:
   - docker-compose build
-  - docker-compose run mgmt bundle config build.nokogiri --use-system-libraries
-  - docker-compose run mgmt bundle install --jobs 4 --without test --without development --without mysql
-  - docker-compose run mgmt bundle exec rails db:migrate
 
 script:
   - docker-compose up -d
