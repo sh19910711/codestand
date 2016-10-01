@@ -8,15 +8,9 @@ env:
     - DOCKER_HOST=tcp://172.16.100.11:2375
 
 before_install:
-  # stupid way
-  - DOCKER_HOST=tcp://127.0.0.1:2375 docker-compose build build
   - DOCKER_HOST=tcp://127.0.0.1:2375 docker-compose up -d build
-  - sleep 5
   - sudo bash -c 'echo "DOCKER_OPTS=\"-H tcp://172.16.100.11:2375\"" > /etc/default/docker'
-  - sudo cat /etc/default/docker
   - sudo service docker restart
-  - sudo service docker restart
-  - netstat -an | grep LISTEN
 
 install:
   - docker-compose build
@@ -24,4 +18,4 @@ install:
 script:
   - docker-compose up -d
   - sleep 5
-  - curl http://localhost/api/apps
+  - docker-compose exec build
