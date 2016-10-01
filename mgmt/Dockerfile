@@ -6,7 +6,7 @@ RUN sed -i -e 's#http://archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/m
 RUN apt-get update && apt-get install -y git build-essential libxml2-dev supervisor nodejs tzdata sqlite3
 RUN mkdir -p /var/run/supervisor
 
-RUN git clone --depth 1 https://github.com/codestand/mgmt /app
+RUN git clone https://github.com/codestand/mgmt /app
 RUN cd /app && git reset --hard $MGMT_SERVER_VERSION
 RUN useradd -m web && chown -R web. /app
 USER web
