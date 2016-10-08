@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ENV BUILD_SERVER_VERSION=0.0.2
+ENV BUILD_SERVER_VERSION=0.0.3
 
 RUN sed -i -e 's#http://archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y curl tar supervisor && \
