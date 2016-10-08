@@ -1,6 +1,6 @@
 FROM ruby:2.3.1
 
-ENV MGMT_SERVER_VERSION=089e3ef17241665ac3d7fd7d3f545e28d6331e2a
+ENV MGMT_SERVER_VERSION=f12102d51307fd9b23760b780040e50c66037f36
 
 RUN sed -i -e 's#http://archive.ubuntu.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y git build-essential libxml2-dev supervisor nodejs tzdata sqlite3
